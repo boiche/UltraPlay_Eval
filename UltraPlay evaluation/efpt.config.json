@@ -1,0 +1,63 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "UltraPlay_EvalContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": "Data.Entities",
+   "OutputContextPath": "Data",
+   "OutputPath": "Data\/Entities",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "UltraPlay_evaluation",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[Bets]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Events]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Matches]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Odds]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Sports]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[noms].[MatchTypess]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "desktop-f7bg25t\\sqlexpress.UltraPlay_Eval.dbo",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": true,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

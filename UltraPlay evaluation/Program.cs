@@ -11,10 +11,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UltraPlay_EvalContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
-    options.EnableSensitiveDataLogging(true);
 });
 builder.Services.AddHostedService<Worker>();
 
 var app = builder.Build();
+
+app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();

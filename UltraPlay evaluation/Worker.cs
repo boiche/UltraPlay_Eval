@@ -1,6 +1,5 @@
 using AutoMapper;
-using Microsoft.IdentityModel.Abstractions;
-using Microsoft.OpenApi.Writers;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using UltraPlay_evaluation;
 using UltraPlay_evaluation.Data;
@@ -13,7 +12,7 @@ namespace WorkerService1
         private readonly ILogger<Worker> _logger;
         private readonly IMapper _mapper;
         private readonly UltraPlay_EvalContext _context;
-        private Timer _timer;
+        private Timer? _timer;
 
         public Worker(ILogger<Worker> logger)
         {
@@ -26,7 +25,7 @@ namespace WorkerService1
             _context = new UltraPlay_EvalContext();
         }
 
-        public void FetchData(object state)
+        public void FetchData(object? state)
         {
             try
             {
@@ -38,12 +37,13 @@ namespace WorkerService1
                 var result = client.GetAsync(address).Result.Content.ReadAsStringAsync().Result;
                 XmlSerializer serializer = new(typeof(XmlSports));
                 StringReader reader = new(result);
-                XmlSports model = serializer.Deserialize(reader) as XmlSports;
-                
+
                 DataFetchUnitOfWork unitOfWork = new(_context, _mapper)
                 {
-                    Model = model
+                    Model = serializer.Deserialize(reader) as XmlSports,
+                    XDocument = XDocument.Parse(result)
                 };
+
                 unitOfWork
                     .Serve<Sport>()
                     .Serve<Event>()
@@ -67,7 +67,7 @@ namespace WorkerService1
             _logger.LogInformation("Timed Background Service is starting.");
 
             _timer = new Timer(FetchData, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(30));
+                TimeSpan.FromSeconds(20));
 
             return Task.CompletedTask;
         }

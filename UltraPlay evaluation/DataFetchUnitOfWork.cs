@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System.Transactions;
+using System.Xml.Linq;
 using UltraPlay_evaluation.Data;
 using UltraPlay_evaluation.Data.Entities;
+using UltraPlay_evaluation.Utils;
 
 namespace UltraPlay_evaluation
 {
@@ -11,7 +12,9 @@ namespace UltraPlay_evaluation
         private readonly UltraPlay_EvalContext _context;
         private readonly IMapper _mapper;
 
-        public XmlSports Model { get; set; }
+        [Obsolete("Replaced with XDocument structure")]
+        public XmlSports? Model { get; set; }
+        public XDocument? XDocument { get; internal set; }
 
         public DataFetchUnitOfWork(UltraPlay_EvalContext context, IMapper mapper)
         {
@@ -19,12 +22,14 @@ namespace UltraPlay_evaluation
             _mapper = mapper;
         }
 
-        public DataFetchUnitOfWork Serve<T>() where T : BaseEntity
+        public DataFetchUnitOfWork Serve<T>() where T : class, IBaseEntity
         {
             var currentEntities = _context.Set<T>().ToList();
-            List<T> incomingEntities = Model.GetLayer<T>(_mapper);
-            var entitiesToAdd = incomingEntities.Where(x => !currentEntities.Select(x => x.ID).Contains(x.ID));
-            var entitiesToRemove = currentEntities.Where(x => !incomingEntities.Select(x => x.ID).Contains(x.ID));
+            var incomingXDocument = XDocument.GetLayer<T>();
+
+            var entitiesToAdd = incomingXDocument.Where(x => !currentEntities.Select(x => x.ID).Contains(x.ID));
+            var entitiesToRemove = currentEntities.Where(x => !incomingXDocument.Select(x => x.ID).Contains(x.ID));
+            var entitiesToUpdate = currentEntities.Where(x => incomingXDocument.Select(x => x.ID).Contains(x.ID));
 
             foreach (var itemToAdd in entitiesToAdd)
             {
@@ -35,6 +40,13 @@ namespace UltraPlay_evaluation
             {
                 var entryToRemove = _context.Entry(itemToRemove);
                 entryToRemove.State = EntityState.Deleted;
+            }
+            foreach (var itemToUpdate in entitiesToUpdate)
+            {
+                var entryToUpdate = _context.Entry(itemToUpdate);
+                var updateWith = incomingXDocument.First(x => x.ID == itemToUpdate.ID);
+                entryToUpdate.CurrentValues.SetValues(updateWith);
+                entryToUpdate.State = EntityState.Modified;                
             }
 
             return this;

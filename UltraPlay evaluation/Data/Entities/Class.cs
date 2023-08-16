@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+#pragma warning disable CS8618
 
 namespace UltraPlay_evaluation.Data.Entities
 {
+    [Obsolete("Replaced with XDocument structure")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
@@ -40,7 +42,7 @@ namespace UltraPlay_evaluation.Data.Entities
             }
         }
 
-        public List<T> GetLayer<T>(IMapper _mapper) where T : BaseEntity
+        public List<T> GetLayer<T>(IMapper _mapper) where T : class
         {
             return typeof(T) switch
             {
@@ -49,12 +51,13 @@ namespace UltraPlay_evaluation.Data.Entities
                 Type type when type == typeof(Match) => Sport.Event.SelectMany(x => x.Match).Select(x => _mapper.Map<XmlSportsSportEventMatch, Match>(x) as T).ToList(),
                 Type type when type == typeof(Bet) => Sport.Event.SelectMany(x => x.Match).SelectMany(x => x.Bet).Select(x => _mapper.Map<XmlSportsSportEventMatchBet, Bet>(x) as T).ToList(),
                 Type type when type == typeof(Odd) => Sport.Event.SelectMany(x => x.Match).SelectMany(x => x.Bet).SelectMany(x => x.Odd).Select(x => _mapper.Map<XmlSportsSportEventMatchBetOdd, Odd>(x) as T).ToList(),
-                _ => throw new InvalidOperationException($"Type {typeof(T).Name} is not supported."),
+                _ => throw new NotSupportedException($"Type {typeof(T).Name} is not supported."),
             };
         }
     }
 
     /// <remarks/>
+    [Obsolete("Replaced with XDocument structure")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
@@ -110,7 +113,8 @@ namespace UltraPlay_evaluation.Data.Entities
         }
     }
 
-    /// <remarks/>
+    /// <remarks/>    
+    [Obsolete("Replaced with XDocument structure")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
@@ -199,6 +203,7 @@ namespace UltraPlay_evaluation.Data.Entities
     }
 
     /// <remarks/>
+    [Obsolete("Replaced with XDocument structure")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
@@ -287,6 +292,7 @@ namespace UltraPlay_evaluation.Data.Entities
     }
 
     /// <remarks/>
+    [Obsolete("Replaced with XDocument structure")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
@@ -359,12 +365,12 @@ namespace UltraPlay_evaluation.Data.Entities
     }
 
     /// <remarks/>
+    [Obsolete("Replaced with XDocument structure")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class XmlSportsSportEventMatchBetOdd
     {
-
         private string nameField;
 
         private int idField;

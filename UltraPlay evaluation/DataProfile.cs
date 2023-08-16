@@ -12,9 +12,6 @@ namespace UltraPlay_evaluation
             CreateMap<XmlSportsSportEventMatch, Match>();
             CreateMap<XmlSportsSportEventMatchBet, Bet>();
             CreateMap<XmlSportsSportEventMatchBetOdd, Odd>();
-            CreateMap<string, Data.Entities.MatchType>()
-                .ForMember(x => x.ID, x => x.MapFrom(t => Enum.Parse(typeof(MatchTypes), t)))
-                .ForMember(x => x.Name, x => x.MapFrom(t => t));
         }
     }
 }

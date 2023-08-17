@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.SqlServer.Management.Smo.Wmi;
 using UltraPlay_evaluation;
 using UltraPlay_evaluation.Data;
 using WorkerService1;
@@ -17,6 +18,16 @@ builder.Services.AddDbContext<UltraPlay_EvalContext>(options =>
 });
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddScoped(x => new MapperConfiguration(x => x.AddProfile(new DataProfile())).CreateMapper());
+builder.Services.AddSingleton<IQueueService>(_ =>
+{
+    if (!int.TryParse(builder.Configuration["QueueCapacity"],
+        out int queueCapacity))
+    {
+        queueCapacity = 100;
+    }
+
+    return new QueueService(queueCapacity);
+});
 
 var app = builder.Build();
 

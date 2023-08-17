@@ -1,4 +1,5 @@
 using AutoMapper;
+using System.Threading.Channels;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using UltraPlay_evaluation;
@@ -13,8 +14,10 @@ namespace WorkerService1
         private readonly IMapper _mapper;
         private readonly UltraPlay_EvalContext _context;
         private Timer? _timer;
+        private readonly IQueueService _queueService;
 
-        public Worker(ILogger<Worker> logger)
+
+        public Worker(ILogger<Worker> logger, IQueueService queueService)
         {
             var mapperConfig = new MapperConfiguration(x =>
             {
@@ -23,6 +26,7 @@ namespace WorkerService1
             _logger = logger;
             _mapper = mapperConfig.CreateMapper();
             _context = new UltraPlay_EvalContext();
+            _queueService = queueService;
         }
 
         public void FetchData(object? state)
@@ -41,7 +45,8 @@ namespace WorkerService1
                 DataFetchUnitOfWork unitOfWork = new(_context, _mapper)
                 {
                     Model = serializer.Deserialize(reader) as XmlSports,
-                    XDocument = XDocument.Parse(result)
+                    XDocument = XDocument.Parse(result),
+                    QueueService = _queueService
                 };
 
                 unitOfWork

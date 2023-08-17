@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Channels;
 using System.Xml.Linq;
 using UltraPlay_evaluation.Data;
 using UltraPlay_evaluation.Data.Entities;
@@ -15,6 +16,7 @@ namespace UltraPlay_evaluation
         [Obsolete("Replaced with XDocument structure")]
         public XmlSports? Model { get; set; }
         public XDocument? XDocument { get; internal set; }
+        public IQueueService QueueService { get; internal set; }
 
         public DataFetchUnitOfWork(UltraPlay_EvalContext context, IMapper mapper)
         {
@@ -42,6 +44,7 @@ namespace UltraPlay_evaluation
                 var entryToRemove = _context.Entry(itemToRemove);
                 entryToRemove.Entity.IsActive = false;
                 entryToRemove.State = EntityState.Detached;
+                QueueService.QueueHiddenAsync(x => entryToRemove.Entity);
             }
             foreach (var itemToUpdate in entitiesToUpdate)
             {
@@ -49,6 +52,7 @@ namespace UltraPlay_evaluation
                 var updateWith = incomingXDocument.First(x => x.ID == itemToUpdate.ID);
                 entryToUpdate.CurrentValues.SetValues(updateWith);
                 entryToUpdate.State = EntityState.Modified;
+                QueueService.QueueOutdatedAsync(x => entryToUpdate.Entity);
             }
 
             return this;

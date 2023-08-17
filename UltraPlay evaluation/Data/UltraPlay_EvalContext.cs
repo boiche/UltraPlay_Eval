@@ -30,7 +30,7 @@ namespace UltraPlay_evaluation.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=DESKTOP-F7BG25T\\SQLEXPRESS;Initial Catalog=UltraPlay_Eval;Integrated Security=True;TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-F7BG25T\\SQLEXPRESS;Initial Catalog=UltraPlay_Eval;Integrated Security=True;TrustServerCertificate=True");
             }
         }
 

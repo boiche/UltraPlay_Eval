@@ -12,5 +12,6 @@ namespace UltraPlay_evaluation.Data
 {
     public partial interface IUltraPlay_EvalContextProcedures
     {
+        Task<List<GetPreviewBetsResult>> GetPreviewBetsAsync(int? matchId, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
     }
 }

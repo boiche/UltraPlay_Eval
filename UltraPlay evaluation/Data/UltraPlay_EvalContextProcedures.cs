@@ -34,6 +34,7 @@ namespace UltraPlay_evaluation.Data
 
         protected void OnModelCreatingGeneratedProcedures(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<GetPreviewBetsResult>().HasNoKey().ToView(null);
         }
     }
 
@@ -44,6 +45,32 @@ namespace UltraPlay_evaluation.Data
         public UltraPlay_EvalContextProcedures(UltraPlay_EvalContext context)
         {
             _context = context;
+        }
+
+        public virtual async Task<List<GetPreviewBetsResult>> GetPreviewBetsAsync(int? matchId, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "matchId",
+                    Value = matchId ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<GetPreviewBetsResult>("EXEC @returnValue = [dbo].[GetPreviewBets] @matchId", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
         }
     }
 }

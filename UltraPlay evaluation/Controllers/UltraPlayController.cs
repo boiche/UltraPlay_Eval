@@ -41,7 +41,7 @@ namespace UltraPlay_evaluation.Controllers
 
         [HttpGet]
         [Route("GetUpcomingMatches")]
-        public ActionResult GetUpcomingMatches()
+        public async Task<ActionResult> GetUpcomingMatches()
         {
             var upcomingMatches = _evalContext
                 .Matches
@@ -53,7 +53,19 @@ namespace UltraPlay_evaluation.Controllers
             foreach (var match in upcomingMatches) 
             {
                 var mapped = _mapper.Map<Match, Models.Match>(match);
-                //mapped.PreviewBets = _evalContext.GetPreviewBets(match.ID);
+                mapped.PreviewBets = new();
+                var svbs = await _evalContext.Procedures.GetPreviewBetsAsync(match.ID);
+
+                foreach (var betType in svbs.GroupBy(x => x.BetName))
+                {
+                    Bet currentBet = _mapper.Map<GetPreviewBetsResult, Bet>(svbs.First(x => x.BetName == betType.Key));
+                    if (betType.All(x => !x.SpecialBetValue.HasValue))                    
+                        currentBet.Odds = betType.Select(x => _mapper.Map<GetPreviewBetsResult, Odd>(x)).ToList();                    
+                    else                    
+                        currentBet.Odds = betType.GroupBy(x => x.SpecialBetValue).First().Select(x => _mapper.Map<GetPreviewBetsResult, Odd>(x)).ToList();                    
+
+                    mapped.PreviewBets.Add(currentBet);
+                }
 
                 result.Add(mapped);                
             }            

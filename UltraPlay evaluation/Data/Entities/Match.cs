@@ -4,15 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UltraPlay_evaluation.Data.Entities
 {
-    public partial class Match : IBaseEntity
+    public partial class Match : BaseEntity
     {
         public Match()
         {
             Bets = new HashSet<Bet>();
         }
 
-        [Key]
-        public int ID { get; set; }
         [StringLength(250)]
         public string Name { get; set; }
         [Column(TypeName = "datetime")]

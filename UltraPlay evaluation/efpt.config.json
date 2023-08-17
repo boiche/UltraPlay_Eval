@@ -12,7 +12,7 @@
    "ProjectRootNamespace": "UltraPlay_evaluation",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
-   "SelectedToBeGenerated": 0,
+   "SelectedToBeGenerated": 1,
    "T4TemplatePath": null,
    "Tables": [
       {
@@ -36,8 +36,8 @@
          "ObjectType": 0
       },
       {
-         "Name": "[noms].[MatchTypess]",
-         "ObjectType": 0
+         "Name": "[dbo].[GetPreviewBets]",
+         "ObjectType": 1
       }
    ],
    "UiHint": "desktop-f7bg25t\\sqlexpress.UltraPlay_Eval.dbo",

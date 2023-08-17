@@ -15,15 +15,14 @@ namespace UltraPlay_evaluation.Data.Configurations
         {
             entity.Property(e => e.ID).ValueGeneratedNever();
 
-            entity.Property(e => e.SpecialBetValue).HasDefaultValueSql("((0.0000))");
+            entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
             entity.Property(e => e.Value).HasDefaultValueSql("((0.000))");
 
             entity.HasOne(d => d.Bet)
                 .WithMany(p => p.Odds)
-                .HasForeignKey(d => d.BetID)                
-                .HasConstraintName("FK_Odds_Bets")
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(d => d.BetID)
+                .HasConstraintName("FK_Odds_Bets");
 
             OnConfigurePartial(entity);
         }

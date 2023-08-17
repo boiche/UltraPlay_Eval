@@ -22,7 +22,7 @@ namespace UltraPlay_evaluation
             _mapper = mapper;
         }
 
-        public DataFetchUnitOfWork Serve<T>() where T : class, IBaseEntity
+        public DataFetchUnitOfWork Serve<T>() where T : BaseEntity
         {
             var currentEntities = _context.Set<T>().ToList();
             var incomingXDocument = XDocument.GetLayer<T>();
@@ -34,19 +34,21 @@ namespace UltraPlay_evaluation
             foreach (var itemToAdd in entitiesToAdd)
             {
                 var entryToAdd = _context.Attach(itemToAdd);
+                entryToAdd.Entity.IsActive = true;
                 entryToAdd.State = EntityState.Added;
             }
             foreach (var itemToRemove in entitiesToRemove)
             {
                 var entryToRemove = _context.Entry(itemToRemove);
-                entryToRemove.State = EntityState.Deleted;
+                entryToRemove.Entity.IsActive = false;
+                entryToRemove.State = EntityState.Detached;
             }
             foreach (var itemToUpdate in entitiesToUpdate)
             {
                 var entryToUpdate = _context.Entry(itemToUpdate);
                 var updateWith = incomingXDocument.First(x => x.ID == itemToUpdate.ID);
                 entryToUpdate.CurrentValues.SetValues(updateWith);
-                entryToUpdate.State = EntityState.Modified;                
+                entryToUpdate.State = EntityState.Modified;
             }
 
             return this;

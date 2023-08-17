@@ -15,14 +15,12 @@ namespace UltraPlay_evaluation.Data.Configurations
         {
             entity.Property(e => e.ID).ValueGeneratedNever();
 
-            entity.Ignore(e => e.MatchType);
+            entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
             entity.HasOne(d => d.Event)
                 .WithMany(p => p.Matches)
                 .HasForeignKey(d => d.EventID)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Matches_Events")
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasConstraintName("FK_Matches_Events");
 
             OnConfigurePartial(entity);
         }

@@ -67,7 +67,7 @@ namespace WorkerService1
             _logger.LogInformation("Timed Background Service is starting.");
 
             _timer = new Timer(FetchData, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(20));
+                TimeSpan.FromSeconds(30));
 
             return Task.CompletedTask;
         }

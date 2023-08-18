@@ -14,7 +14,6 @@ namespace UltraPlay_evaluation.Utils
         private readonly UltraPlay_EvalContext _context;
         private readonly IMapper _mapper;
 
-        [Obsolete("Replaced with XDocument structure")]
         public XDocument? XDocument { get; internal set; }
         public IQueueService QueueService { get; internal set; }
 

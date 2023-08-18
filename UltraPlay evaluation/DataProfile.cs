@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using UltraPlay_evaluation.Data.Entities;
-using UltraPlay_evaluation.Models;
 
 namespace UltraPlay_evaluation
 {
@@ -8,12 +7,7 @@ namespace UltraPlay_evaluation
     {
         public DataProfile() 
         {
-            CreateMap<XmlSportsSport, Sport>();
-            CreateMap<XmlSportsSportEvent, Event>();
-            CreateMap<XmlSportsSportEventMatch, Data.Entities.Match>();
-            CreateMap<XmlSportsSportEventMatchBet, Bet>();
-            CreateMap<XmlSportsSportEventMatchBetOdd, Odd>();
-            CreateMap<Data.Entities.Match, Models.Match>();
+            CreateMap<Match, Models.Match>();
             CreateMap<GetPreviewBetsResult, Bet>()
                 .ForMember(x => x.MatchID, x => x.MapFrom(s => s.MatchID))
                 .ForMember(x => x.ID, x => x.MapFrom(s => s.BetID))

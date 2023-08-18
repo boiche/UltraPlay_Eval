@@ -1,10 +1,11 @@
 using AutoMapper;
-using System.Threading.Channels;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using UltraPlay_evaluation;
 using UltraPlay_evaluation.Data;
 using UltraPlay_evaluation.Data.Entities;
+using UltraPlay_evaluation.QueueService;
+using UltraPlay_evaluation.Utils;
 
 namespace WorkerService1
 {
@@ -39,12 +40,8 @@ namespace WorkerService1
                     BaseAddress = new Uri(address)
                 };
                 var result = client.GetAsync(address).Result.Content.ReadAsStringAsync().Result;
-                XmlSerializer serializer = new(typeof(XmlSports));
-                StringReader reader = new(result);
-
                 DataFetchUnitOfWork unitOfWork = new(_context, _mapper)
                 {
-                    Model = serializer.Deserialize(reader) as XmlSports,
                     XDocument = XDocument.Parse(result),
                     QueueService = _queueService
                 };
@@ -72,7 +69,7 @@ namespace WorkerService1
             _logger.LogInformation("Timed Background Service is starting.");
 
             _timer = new Timer(FetchData, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(30));
+                TimeSpan.FromSeconds(60));
 
             return Task.CompletedTask;
         }

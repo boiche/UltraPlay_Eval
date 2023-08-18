@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Channels;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Xml.Linq;
 using UltraPlay_evaluation.Data;
 using UltraPlay_evaluation.Data.Entities;
-using UltraPlay_evaluation.Utils;
+using UltraPlay_evaluation.QueueService;
 
-namespace UltraPlay_evaluation
+namespace UltraPlay_evaluation.Utils
 {
     public class DataFetchUnitOfWork
     {
@@ -14,7 +15,6 @@ namespace UltraPlay_evaluation
         private readonly IMapper _mapper;
 
         [Obsolete("Replaced with XDocument structure")]
-        public XmlSports? Model { get; set; }
         public XDocument? XDocument { get; internal set; }
         public IQueueService QueueService { get; internal set; }
 
@@ -50,9 +50,13 @@ namespace UltraPlay_evaluation
             {
                 var entryToUpdate = _context.Entry(itemToUpdate);
                 var updateWith = incomingXDocument.First(x => x.ID == itemToUpdate.ID);
-                entryToUpdate.CurrentValues.SetValues(updateWith);
-                entryToUpdate.State = EntityState.Modified;
-                QueueService.QueueOutdatedAsync(x => entryToUpdate.Entity);
+
+                if (!AreEqual(entryToUpdate.Entity, updateWith))
+                {
+                    entryToUpdate.CurrentValues.SetValues(updateWith);
+                    entryToUpdate.State = EntityState.Modified;
+                    QueueService.QueueOutdatedAsync(x => entryToUpdate.Entity);
+                }
             }
 
             return this;
@@ -61,6 +65,28 @@ namespace UltraPlay_evaluation
         public void UpdateDatabase()
         {
             _context.SaveChanges();
+        }
+
+        private static bool AreEqual<T>(T first, T second)
+        {
+            bool result = true;
+            foreach (var property in first.GetType().GetProperties().Where(x => !x.HasAttribute<InversePropertyAttribute>()))
+            {
+                var firstValue = property.GetValue(first);
+                var secondValue = property.GetValue(second);
+
+                if (firstValue is null && secondValue is not null ||
+                    firstValue is not null && secondValue is null)
+                    return false;
+
+                if (firstValue is null && secondValue is null)
+                    continue;
+
+                if (!firstValue.Equals(secondValue))
+                    return false;
+            }
+
+            return result;
         }
     }
 }

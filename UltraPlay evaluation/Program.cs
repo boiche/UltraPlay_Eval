@@ -1,10 +1,9 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.SqlServer.Management.Smo.Wmi;
 using UltraPlay_evaluation;
 using UltraPlay_evaluation.Data;
+using UltraPlay_evaluation.QueueService;
 using WorkerService1;
-//using Microsoft.AspNetCore.Mvc.New
 
 var builder = WebApplication.CreateBuilder(args);
 
